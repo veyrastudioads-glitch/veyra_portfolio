@@ -76,7 +76,7 @@ export default function Contact() {
               </span>
               <div className="inline-flex items-center gap-2 text-[#111111] font-sans font-medium text-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Open for Select Q2/Q3 Collaborations</span>
+                <span>AVAILABLE FOR NEW PROJECTS</span>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function Contact() {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Jane Doe"
+                    placeholder="Your name"
                     className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
                   />
                 </div>
@@ -115,7 +115,7 @@ export default function Contact() {
                     required
                     value={formData.businessName}
                     onChange={handleChange}
-                    placeholder="Acme Studio / Café / Brand"
+                    placeholder="Your business or brand name"
                     className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
                   />
                 </div>
@@ -134,7 +134,7 @@ export default function Contact() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="jane@example.com"
+                    placeholder="your@email.com"
                     className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
                   />
                 </div>
@@ -149,7 +149,7 @@ export default function Contact() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="Phone or WhatsApp number"
                     className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
                   />
                 </div>
