@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, Check, Info } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/meaendgl';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: '',
     businessName: '',
     email: '',
     phone: '',
     businessType: 'Café / Hospitality',
     message: '',
-  });
+  };
 
-  const [submittedStatus, setSubmittedStatus] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState(null); // 'success' | 'error' | null
 
   const businessTypes = [
     'Café / Hospitality',
@@ -23,16 +27,57 @@ export default function Contact() {
   ];
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    if (status) setStatus(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Visual prototype acknowledgement without fake claims of sending
-    setSubmittedStatus(true);
+    if (isSubmitting) return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setStatus('error');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          businessName: formData.businessName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          businessType: formData.businessType,
+          message: formData.message.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData(initialFormData);
+      } else {
+        setStatus('error');
+      }
+    } catch (err) {
+      console.error('Contact form submission error:', err);
+      setStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,7 +145,8 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Your name"
-                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all disabled:opacity-60"
                   />
                 </div>
 
@@ -116,7 +162,8 @@ export default function Contact() {
                     value={formData.businessName}
                     onChange={handleChange}
                     placeholder="Your business or brand name"
-                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all disabled:opacity-60"
                   />
                 </div>
               </div>
@@ -135,7 +182,8 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all disabled:opacity-60"
                   />
                 </div>
 
@@ -150,7 +198,8 @@ export default function Contact() {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Phone or WhatsApp number"
-                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all disabled:opacity-60"
                   />
                 </div>
               </div>
@@ -165,7 +214,8 @@ export default function Contact() {
                   name="businessType"
                   value={formData.businessType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all disabled:opacity-60"
                 >
                   {businessTypes.map((type) => (
                     <option key={type} value={type}>
@@ -188,22 +238,41 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Tell us about your project, timeline, and goals..."
-                  className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all resize-y"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3.5 rounded-xl bg-[#FBFBF9] border border-[#111111]/12 text-[#111111] placeholder:text-[#A9A8A1] text-sm focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all resize-y disabled:opacity-60"
                 ></textarea>
               </div>
 
-              {/* Prototype notice state on submit */}
-              {submittedStatus && (
-                <div className="p-4 rounded-xl bg-[#ECECE8] border border-[#111111]/10 flex items-start gap-3 text-xs text-[#5C5B56] animate-fade-in">
-                  <Info className="w-4 h-4 text-[#C58A55] shrink-0 mt-0.5" />
+              {/* Feedback States */}
+              {status === 'success' && (
+                <div
+                  id="contact-success-message"
+                  className="p-5 rounded-xl bg-[#F2F7F4] border border-[#2E6B44]/15 flex items-start gap-3.5 text-xs text-[#204E31] animate-fade-in"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-[#2E6B44] shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-[#111111] mb-0.5">
-                      Visual Prototype Mode (Phase 1)
+                    <p className="font-semibold text-[#183B25] text-sm mb-0.5">
+                      Thanks — your enquiry has been received.
                     </p>
-                    <p>
-                      Form fields and layout validated. Live contact transmission and notification webhooks will be connected in Phase 2.
+                    <p className="text-xs text-[#2C5F3D]">
+                      Veyra Studio will get back to you soon.
                     </p>
                   </div>
+                </div>
+              )}
+
+              {status === 'error' && (
+                <div
+                  id="contact-error-message"
+                  className="p-4 rounded-xl bg-[#FDF2F2] border border-[#992B2B]/15 flex items-start gap-3 text-xs text-[#8A2424] animate-fade-in"
+                  role="alert"
+                >
+                  <AlertCircle className="w-4 h-4 text-[#C53939] shrink-0 mt-0.5" />
+                  <p className="font-medium">
+                    Something went wrong. Please try again or contact us directly.
+                  </p>
                 </div>
               )}
 
@@ -212,10 +281,20 @@ export default function Contact() {
                 <button
                   type="submit"
                   id="contact-submit-btn"
-                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#111111] text-[#FBFBF9] text-xs font-semibold uppercase tracking-[0.18em] hover:bg-[#262626] transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#111111]"
+                  disabled={isSubmitting}
+                  className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#111111] text-[#FBFBF9] text-xs font-semibold uppercase tracking-[0.18em] hover:bg-[#262626] transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#111111] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <span>SEND ENQUIRY</span>
-                  <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-[#C58A55]" />
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-[#C58A55]" />
+                      <span>SENDING...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>SEND ENQUIRY</span>
+                      <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-[#C58A55]" />
+                    </>
+                  )}
                 </button>
               </div>
             </form>
